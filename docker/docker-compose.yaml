@@ -82,4 +82,9 @@ services:
         max-file: "3"
 
 networks:
-  internal:
+
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.57.0/24
