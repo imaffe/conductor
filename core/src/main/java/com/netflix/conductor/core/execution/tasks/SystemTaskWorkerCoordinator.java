@@ -38,6 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+// TODO why Another SystemTaskWorkerCoordinator Layer
 @Singleton
 public class SystemTaskWorkerCoordinator {
 
@@ -73,6 +74,7 @@ public class SystemTaskWorkerCoordinator {
 
     static synchronized void add(WorkflowSystemTask systemTask) {
         LOGGER.info("Adding the queue for system task: {}", systemTask.getName());
+        // TODO all the systemTasks, will there be any task that has a non-predefined name?
         taskNameWorkflowTaskMapping.put(systemTask.getName(), systemTask);
         queue.add(systemTask.getName());
     }
@@ -80,6 +82,7 @@ public class SystemTaskWorkerCoordinator {
     private void listen() {
         try {
             for (; ; ) {
+                // TODO monitor new systemTaskqueue Changes, the systemTaskQueue could be changing over time
                 String workflowSystemTaskQueueName = queue.poll(60, TimeUnit.SECONDS);
                 if (workflowSystemTaskQueueName != null && !listeningTaskQueues.contains(workflowSystemTaskQueueName)
                     && shouldListen(workflowSystemTaskQueueName)) {

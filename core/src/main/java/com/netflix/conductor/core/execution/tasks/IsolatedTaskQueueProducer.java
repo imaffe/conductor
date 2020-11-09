@@ -32,12 +32,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO when will this class be used ? Used for Isolation Groups
 @Singleton
 public class IsolatedTaskQueueProducer {
 
 	private static final Logger logger = LoggerFactory.getLogger(IsolatedTaskQueueProducer.class);
 	private MetadataService metadataService;
 
+
+	// TODO Isolation Task polling interval is defined here
 	@Inject
 	public IsolatedTaskQueueProducer(MetadataService metadataService, Configuration config) {
 
@@ -79,6 +82,7 @@ public class IsolatedTaskQueueProducer {
 		for (TaskDef isolatedTaskDef : isolationTaskDefs) {
 			for (String taskType : taskTypes) {
 				String taskQueue = QueueUtils.getQueueName(taskType, null,
+					// TODO add an isolation queue for all system task types, all Isolation task types are added here
 					isolatedTaskDef.getExecutionNameSpace(), isolatedTaskDef.getIsolationGroupId());
 				logger.debug("Adding taskQueue:'{}' to system task worker coordinator", taskQueue);
 				SystemTaskWorkerCoordinator.queue.add(taskQueue);

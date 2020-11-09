@@ -24,25 +24,7 @@ import com.google.inject.multibindings.ProvidesIntoMap;
 import com.google.inject.multibindings.StringMapKey;
 import com.google.inject.name.Named;
 import com.netflix.conductor.core.execution.ParametersUtils;
-import com.netflix.conductor.core.execution.mapper.DecisionTaskMapper;
-import com.netflix.conductor.core.execution.mapper.DoWhileTaskMapper;
-import com.netflix.conductor.core.execution.mapper.DynamicTaskMapper;
-import com.netflix.conductor.core.execution.mapper.EventTaskMapper;
-import com.netflix.conductor.core.execution.mapper.ExclusiveJoinTaskMapper;
-import com.netflix.conductor.core.execution.mapper.ForkJoinDynamicTaskMapper;
-import com.netflix.conductor.core.execution.mapper.ForkJoinTaskMapper;
-import com.netflix.conductor.core.execution.mapper.HTTPTaskMapper;
-import com.netflix.conductor.core.execution.mapper.JoinTaskMapper;
-import com.netflix.conductor.core.execution.mapper.JsonJQTransformTaskMapper;
-import com.netflix.conductor.core.execution.mapper.KafkaPublishTaskMapper;
-import com.netflix.conductor.core.execution.mapper.LambdaTaskMapper;
-import com.netflix.conductor.core.execution.mapper.SetVariableTaskMapper;
-import com.netflix.conductor.core.execution.mapper.SimpleTaskMapper;
-import com.netflix.conductor.core.execution.mapper.SubWorkflowTaskMapper;
-import com.netflix.conductor.core.execution.mapper.TaskMapper;
-import com.netflix.conductor.core.execution.mapper.TerminateTaskMapper;
-import com.netflix.conductor.core.execution.mapper.UserDefinedTaskMapper;
-import com.netflix.conductor.core.execution.mapper.WaitTaskMapper;
+import com.netflix.conductor.core.execution.mapper.*;
 import com.netflix.conductor.core.execution.tasks.Event;
 import com.netflix.conductor.core.execution.tasks.IsolatedTaskQueueProducer;
 import com.netflix.conductor.core.execution.tasks.Lambda;
@@ -54,24 +36,8 @@ import com.netflix.conductor.core.execution.tasks.Wait;
 import com.netflix.conductor.core.utils.JsonUtils;
 import com.netflix.conductor.dao.MetadataDAO;
 
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_DECISION;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_DO_WHILE;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_DYNAMIC;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_EVENT;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_EXCLUSIVE_JOIN;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_FORK_JOIN;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_FORK_JOIN_DYNAMIC;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_HTTP;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_JOIN;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_JSON_JQ_TRANSFORM;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_KAFKA_PUBLISH;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_LAMBDA;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_SET_VARIABLE;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_SIMPLE;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_SUB_WORKFLOW;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_TERMINATE;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_USER_DEFINED;
-import static com.netflix.conductor.common.metadata.workflow.TaskType.TASK_TYPE_WAIT;
+import static com.netflix.conductor.common.metadata.workflow.TaskType.*;
+
 /**
  * @author Viren
  */
@@ -79,6 +45,7 @@ public class CoreModule extends AbstractModule {
 
     private static final String TASK_MAPPERS_QUALIFIER = "TaskMappers";
 
+    // TODO initialize the core configuration
     @Override
     protected void configure() {
         install(MultibindingsScanner.asModule());
@@ -199,6 +166,14 @@ public class CoreModule extends AbstractModule {
     @Named(TASK_MAPPERS_QUALIFIER)
     public TaskMapper getHTTPTaskMapper(ParametersUtils parametersUtils, MetadataDAO metadataDAO) {
         return new HTTPTaskMapper(parametersUtils, metadataDAO);
+    }
+
+    @ProvidesIntoMap
+    @StringMapKey(TASK_TYPE_DYNAMIC_PROTOBUF_GRPC)
+    @Singleton
+    @Named(TASK_MAPPERS_QUALIFIER)
+    public TaskMapper getDynamicProtobufGrpcTaskMapper(ParametersUtils parametersUtils, MetadataDAO metadataDAO) {
+        return new DynamicProtobufGrpcTaskMapper(parametersUtils, metadataDAO);
     }
 
     @ProvidesIntoMap

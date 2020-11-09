@@ -193,6 +193,7 @@ public class ExecutionDAOFacade {
      * @param workflow the workflow to be created
      * @return the id of the created workflow
      */
+    // TODO so it only creates the data store but not trigger anything ?
     public String createWorkflow(Workflow workflow) {
         workflow.setCreateTime(System.currentTimeMillis());
         executionDAO.createWorkflow(workflow);

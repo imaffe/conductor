@@ -51,6 +51,8 @@ import com.netflix.conductor.service.ExecutionService;
  * @author Viren
  *
  */
+
+// TODO when is this queue manager used ?
 @Singleton
 public class QueueManager {
 

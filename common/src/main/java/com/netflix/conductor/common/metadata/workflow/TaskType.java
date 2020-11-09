@@ -17,6 +17,7 @@ public enum TaskType {
     WAIT(true),
     USER_DEFINED(false),
     HTTP(true),
+    DYNAMIC_PROTOBUF_GRPC(true),
     LAMBDA(true),
     EXCLUSIVE_JOIN(true),
     TERMINATE(true),
@@ -41,6 +42,7 @@ public enum TaskType {
     public static final String TASK_TYPE_USER_DEFINED = "USER_DEFINED";
     public static final String TASK_TYPE_SIMPLE = "SIMPLE";
     public static final String TASK_TYPE_HTTP = "HTTP";
+    public static final String TASK_TYPE_DYNAMIC_PROTOBUF_GRPC = "DYNAMIC_PROTOBUF_GRPC";
     public static final String TASK_TYPE_LAMBDA= "LAMBDA";
     public static final String TASK_TYPE_EXCLUSIVE_JOIN = "EXCLUSIVE_JOIN";
     public static final String TASK_TYPE_TERMINATE = "TERMINATE";

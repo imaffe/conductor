@@ -502,6 +502,8 @@ public class DeciderService {
         externalPayloadStorageUtils.verifyAndUpload(task, PayloadType.TASK_OUTPUT);
     }
 
+
+    // TODO store it somewhere?
     void externalizeWorkflowData(Workflow workflow) {
         externalPayloadStorageUtils.verifyAndUpload(workflow, PayloadType.WORKFLOW_INPUT);
         externalPayloadStorageUtils.verifyAndUpload(workflow, PayloadType.WORKFLOW_OUTPUT);

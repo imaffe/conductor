@@ -76,6 +76,7 @@ public class SimpleActionProcessor implements ActionProcessor {
         throw new UnsupportedOperationException("Action not supported " + action.getAction() + " for event " + event);
     }
 
+    // TODO Used for Event type task
     private Map<String, Object> completeTask(Action action, Object payload, TaskDetails taskDetails, Status status, String event, String messageId) {
 
         Map<String, Object> input = new HashMap<>();

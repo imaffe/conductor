@@ -235,9 +235,15 @@ public class HttpTask extends WorkflowSystemTask {
 		task.setStatus(Status.CANCELED);
 	}
 
+	//TODO originally it is async, we set it to sync to test the performance
+//	@Override
+//	public boolean isAsync() {
+//		return true;
+//	}
+
 	@Override
 	public boolean isAsync() {
-		return true;
+		return false;
 	}
 
 	@Override

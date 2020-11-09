@@ -219,6 +219,7 @@ public class ExecutionService {
 	}
 
 	//For backward compatibility - to be removed in the later versions
+	// TODO so this is the old version receiving task execution results ?
 	public void updateTask(Task task) {
 		updateTask(new TaskResult(task));
 	}

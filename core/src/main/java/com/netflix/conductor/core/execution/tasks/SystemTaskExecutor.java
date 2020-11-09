@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Manages the threadpool used by system task workers for execution.
  */
+// TODO this class is started to poll aysnc system task from queue
 class SystemTaskExecutor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SystemTaskExecutor.class);
@@ -91,6 +92,7 @@ class SystemTaskExecutor {
             }
             LOGGER.debug("Polling queue: {} with {} slots acquired", queueName, acquiredSlots);
 
+            // TODO running on server and executes system tasks
             List<String> polledTaskIds = queueDAO.pop(queueName, acquiredSlots, 200);
 
             Monitors.recordTaskPoll(queueName);

@@ -18,6 +18,7 @@ import com.google.inject.util.Modules;
 import com.netflix.conductor.cassandra.CassandraModule;
 import com.netflix.conductor.common.utils.ExternalPayloadStorage;
 import com.netflix.conductor.common.utils.JsonMapperProvider;
+import com.netflix.conductor.contribs.http.DynamicProtobufGrpcTask;
 import com.netflix.conductor.contribs.http.HttpTask;
 import com.netflix.conductor.contribs.http.RestClientManager;
 import com.netflix.conductor.contribs.json.JsonJqTransform;
@@ -197,7 +198,9 @@ public class ModulesProvider implements Provider<List<AbstractModule>> {
             });
         }
 
+        // TODO need to register the systemTask here
         new HttpTask(new RestClientManager(configuration), configuration, new JsonMapperProvider().get());
+        new DynamicProtobufGrpcTask(new RestClientManager(configuration), configuration, new JsonMapperProvider().get());
         new KafkaPublishTask(configuration, new KafkaProducerManager(configuration), new JsonMapperProvider().get());
         new JsonJqTransform(new JsonMapperProvider().get());
         modules.add(new ServerModule());

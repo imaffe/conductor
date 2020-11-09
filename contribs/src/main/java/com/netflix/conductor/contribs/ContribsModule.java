@@ -48,6 +48,7 @@ import rx.Scheduler;
  */
 public class ContribsModule extends AbstractModule {
 
+	// TODO community contributed
 	@Override
 	protected void configure() {
 		bind(QueueManager.class).asEagerSingleton();
@@ -67,7 +68,8 @@ public class ContribsModule extends AbstractModule {
 	public AmazonSQSClient getSQSClient(AWSCredentialsProvider acp) {
 		return new AmazonSQSClient(acp);
 	}
-	
+
+	// TODO AWS SQS became one member of observer manager
 	@Provides
 	public Map<Status, ObservableQueue> getQueues(Configuration config, AWSCredentialsProvider acp) {
 		

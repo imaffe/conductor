@@ -388,6 +388,7 @@ public class WorkflowExecutor {
         workflow.setTaskToDomain(taskToDomain);
         workflow.setVariables(workflowDefinition.getVariables());
 
+        // TODO what does decider service do ?
         workflow.setInput(workflowInput);
         if (workflow.getInput() != null) {
             deciderService.externalizeWorkflowData(workflow);
@@ -397,6 +398,7 @@ public class WorkflowExecutor {
         }
 
         try {
+            // TODO is this creating workflow in the db ??
             executionDAOFacade.createWorkflow(workflow);
             LOGGER.debug("A new instance of workflow: {} created with id: {}", workflow.getWorkflowName(), workflowId);
             //then decide to see if anything needs to be done as part of the workflow
@@ -810,6 +812,7 @@ public class WorkflowExecutor {
      * @param taskResult the task result to be updated
      * @throws ApplicationException
      */
+    // TODO callled by workers and trigger a new state migration
     public void updateTask(TaskResult taskResult) {
         if (taskResult == null) {
             throw new ApplicationException(Code.INVALID_INPUT, "Task object is null");
@@ -988,6 +991,7 @@ public class WorkflowExecutor {
      * @return true if the workflow has completed (success or failed), false otherwise.
      * @throws ApplicationException If there was an error - caller should retry in this case.
      */
+    // TODO is this the entrace of the workflow execution ?
     public boolean decide(String workflowId) {
         if (!executionLockService.acquireLock(workflowId)) {
             return false;
@@ -1004,6 +1008,7 @@ public class WorkflowExecutor {
             return true;
         }
 
+        // TODO get workflow status, put it to decider
         try {
             DeciderService.DeciderOutcome outcome = deciderService.decide(workflow);
             if (outcome.isComplete) {
@@ -1018,12 +1023,16 @@ public class WorkflowExecutor {
 
             tasksToBeScheduled = dedupAndAddTasks(workflow, tasksToBeScheduled);
 
+            // TODO payattetion to the predicate usage here
             for (Task task : outcome.tasksToBeScheduled) {
                 if (isSystemTask.and(isNonTerminalTask).test(task)) {
                     WorkflowSystemTask workflowSystemTask = WorkflowSystemTask.get(task.getTaskType());
+                    // TODO why do we need to  put workflowInstance for systemtask to execute ? Context?
                     Workflow workflowInstance = deciderService.populateWorkflowAndTaskData(workflow);
+                    // Sync workflowSystemTask and execute
                     if (!workflowSystemTask.isAsync() && workflowSystemTask.execute(workflowInstance, task, this)) {
-                        // FIXME: temporary hack to workaround TERMINATE task
+                        // FIXME: temporary hack to workaround TERMINATE tas
+                        // TODO only temporary tasks is traversed here
                         if (TERMINATE.name().equals(task.getTaskType())) {
                         	deciderService.externalizeTaskData(task);
                         	executionDAOFacade.updateTask(task);
@@ -1058,6 +1067,7 @@ public class WorkflowExecutor {
                             }
                             return true;
                         }
+                        // TODO state migration?
                         deciderService.externalizeTaskData(task);
                         tasksToBeUpdated.add(task);
                         stateChanged = true;
@@ -1065,13 +1075,18 @@ public class WorkflowExecutor {
                 }
             }
 
+            // TODO execution DAO is updated, might trigger some workflow
             if (!outcome.tasksToBeUpdated.isEmpty() || !tasksToBeScheduled.isEmpty()) {
+                // TODO udpate the first batch of tasks , sync workflowSystemTasks
                 executionDAOFacade.updateTasks(tasksToBeUpdated);
                 executionDAOFacade.updateWorkflow(workflow);
             }
 
+            // TODO scheduleTask ? is the blocking
             stateChanged = scheduleTask(workflow, tasksToBeScheduled) || stateChanged;
 
+            // TODO decide is a recursive call, when sync systemTasks are exectued, we need to trigger
+            // a new decide right away
             if (stateChanged) {
                 decide(workflowId);
             }
@@ -1224,6 +1239,7 @@ public class WorkflowExecutor {
         return executionDAOFacade.getWorkflowById(workflowId, includeTasks);
     }
 
+    // TODO is this the external queue ?
     public void addTaskToQueue(Task task) {
         // put in queue
         String taskQueueName = QueueUtils.getQueueName(task);
@@ -1236,6 +1252,7 @@ public class WorkflowExecutor {
     }
 
     //Executes the async system task
+    // TODO system execution
     public void executeSystemTask(WorkflowSystemTask systemTask, String taskId, int callbackTime) {
         try {
             Task task = executionDAOFacade.getTaskById(taskId);
@@ -1439,6 +1456,7 @@ public class WorkflowExecutor {
                 if (task.getStatus() != null && !task.getStatus().isTerminal() && task.getStartTime() == 0) {
                     task.setStartTime(System.currentTimeMillis());
                 }
+                // SYNC TASK
                 if (!workflowSystemTask.isAsync()) {
                     try {
                         deciderService.populateTaskData(task);
@@ -1447,6 +1465,7 @@ public class WorkflowExecutor {
                         String errorMsg = String.format("Unable to start system task: %s, {id: %s, name: %s}", task.getTaskType(), task.getTaskId(), task.getTaskDefName());
                         throw new ApplicationException(Code.INTERNAL_ERROR, errorMsg, e);
                     }
+                    //  TODO sync systemTask started
                     startedSystemTasks = true;
                     deciderService.externalizeTaskData(task);
                     executionDAOFacade.updateTask(task);
@@ -1468,7 +1487,9 @@ public class WorkflowExecutor {
         }
 
         // On addTaskToQueue failures, ignore the exceptions and let WorkflowRepairService take care of republishing the messages to the queue.
+        // TODO add simple task + async systemTasks are added to the
         try {
+            // TODO systemTask and simple task added to different queues ?
             addTaskToQueue(tasksToBeQueued);
         } catch (Exception e) {
             List<String> taskIds = tasksToBeQueued.stream()
