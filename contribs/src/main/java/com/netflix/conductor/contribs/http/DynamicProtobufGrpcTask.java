@@ -92,6 +92,7 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
     @Override
     public void start(Workflow workflow, Task task, WorkflowExecutor executor) {
         logger.info("DynamicProtobufGrpcTask Start gets called");
+        task.setStatus(Status.COMPLETED);
     }
 
 
