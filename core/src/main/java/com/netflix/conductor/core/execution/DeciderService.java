@@ -88,6 +88,7 @@ public class DeciderService {
     }
 
     //QQ public method validation of the input params
+    // TODO need to read this.
     public DeciderOutcome decide(Workflow workflow) throws TerminateWorkflowException {
 
         //In case of a new workflow the list of tasks will be empty.

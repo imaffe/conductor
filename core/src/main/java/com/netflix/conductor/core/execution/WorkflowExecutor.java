@@ -993,6 +993,7 @@ public class WorkflowExecutor {
      */
     // TODO is this the entrace of the workflow execution ?
     public boolean decide(String workflowId) {
+        long allStartTime = System.currentTimeMillis();
         if (!executionLockService.acquireLock(workflowId)) {
             return false;
         }
@@ -1010,7 +1011,11 @@ public class WorkflowExecutor {
 
         // TODO get workflow status, put it to decider
         try {
+            // TODO all these logging is temporary
+            long decideStartTime = System.currentTimeMillis();
             DeciderService.DeciderOutcome outcome = deciderService.decide(workflow);
+            long decideEndTime = System.currentTimeMillis();
+            LOGGER.info("[AFFE DEBUG] decider took time : {} ms", decideEndTime - decideStartTime);
             if (outcome.isComplete) {
                 completeWorkflow(workflow);
                 return true;
@@ -1083,10 +1088,15 @@ public class WorkflowExecutor {
             }
 
             // TODO scheduleTask ? is the blocking
+            long scheduleStartTime = System.currentTimeMillis();
             stateChanged = scheduleTask(workflow, tasksToBeScheduled) || stateChanged;
-
+            long scheduleEndTime = System.currentTimeMillis();
+            LOGGER.info("[AFFE DEBUG] schedule took took time : {} ms", scheduleEndTime - scheduleStartTime);
             // TODO decide is a recursive call, when sync systemTasks are exectued, we need to trigger
             // a new decide right away
+
+            long allEndTime = System.currentTimeMillis();
+            LOGGER.info("[AFFE DEBUG] all decide took took time : {} ms", allEndTime - allStartTime);
             if (stateChanged) {
                 decide(workflowId);
             }
