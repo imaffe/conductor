@@ -12,11 +12,11 @@ plugins {
 
 protobuf {
 	protoc {
-		artifact = "com.google.protobuf:protoc:3.12.0"
+		artifact = "com.google.protobuf:protoc:${revProtoBuf}"
 	}
 	plugins {
 		grpc {
-			artifact = 'io.grpc:protoc-gen-grpc-java:1.33.1'
+			artifact = "io.grpc:protoc-gen-grpc-java:${revGrpc}"
 		}
 	}
 	generateProtoTasks {
@@ -65,19 +65,19 @@ dependencies {
 	compile "com.netflix.spectator:spectator-reg-metrics3:${revSpectator}"
 
 
-	implementation 'com.google.protobuf:protobuf-java:3.11.0'
-	implementation 'com.google.protobuf:protobuf-java-util:3.11.0'
+	implementation "com.google.protobuf:protobuf-java:${revProtoBuf}"
+	implementation "com.google.protobuf:protobuf-java-util:${revProtoBuf}"
 
 //	grpc task
-	implementation 'io.grpc:grpc-core:1.33.1'
-	implementation 'io.grpc:grpc-okhttp:1.33.1'
-	implementation 'io.grpc:grpc-protobuf:1.33.1'
-	implementation 'io.grpc:grpc-stub:1.33.1'
-	implementation 'io.grpc:grpc-auth:1.33.1'
-	implementation 'io.grpc:grpc-netty:1.33.1'
-//	implementation 'org.apache.logging.log4j:log4j-api:2.14.0'
-//	implementation 'org.apache.logging.log4j:log4j-core:2.14.0'
-//	implementation 'org.slf4j:slf4j-api:1.7.25'
-	implementation 'com.github.os72:protoc-jar:3.11.4'
-	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+	implementation "io.grpc:grpc-core:${revGrpc}"
+	implementation "io.grpc:grpc-okhttp:${revGrpc}"
+	implementation "io.grpc:grpc-protobuf:${revGrpc}"
+	implementation "io.grpc:grpc-stub:${revGrpc}"
+	implementation "io.grpc:grpc-auth:${revGrpc}"
+	implementation "io.grpc:grpc-netty:${revGrpc}"
+//	implementation "org.apache.logging.log4j:log4j-api:2.14.0"
+//	implementation "org.apache.logging.log4j:log4j-core:2.14.0"
+//	implementation "org.slf4j:slf4j-api:1.7.25"
+	implementation "com.github.os72:protoc-jar:${revProtoBuf}"
+	compileOnly "org.apache.tomcat:annotations-api:6.0.53"
 }
