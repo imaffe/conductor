@@ -69,6 +69,8 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
 
     private String requestParameter;
 
+    private static final String TMP_JSON_INPUT = "{\"latitude\": 407838351, \"longitude\": -746143763}";
+
     @Inject
     public DynamicProtobufGrpcTask(RestClientManager restClientManager,
                     Configuration config,
@@ -123,6 +125,8 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
 
 
         ServiceCall.callEndpoint(
+
+                TMP_JSON_INPUT,
                 output,
                 protoConfig,
                 Optional.of("localhost:8980"),

@@ -34,6 +34,7 @@ public class ServiceCall {
 
   /** Calls the endpoint specified in the arguments */
   public static void callEndpoint(
+          String jsonInput,
           Output output,
           ConfigProto.ProtoConfiguration protoConfig,
           Optional<String> endpoint,
@@ -106,7 +107,7 @@ public class ServiceCall {
 
     // TODO here it reads the inputs
     ImmutableList<DynamicMessage> requestMessages =
-            MessageReader.forFile(Paths.get("C:\\Users\\affezhang\\IdeaProjects\\java_protobuf_demo2\\src\\main\\resources\\input.json"),
+            MessageReader.forString(jsonInput,
                     methodDescriptor.getInputType(), registry).read();
 
     // TODO here it defines the output writers

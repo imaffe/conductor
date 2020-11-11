@@ -11,6 +11,7 @@ import com.google.protobuf.util.JsonFormat.TypeRegistry;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -47,6 +48,17 @@ public class MessageReader {
     } catch (IOException e) {
       throw new IllegalArgumentException("Unable to read file: " + path.toString(), e);
     }
+  }
+
+  /** Creates a {@link MessageReader} which reads the messages from a JSON String. */
+
+  // TODO need to optimize this as we don't really need to read from a stream ?
+  public static MessageReader forString(String jsonStr, Descriptor descriptor, TypeRegistry registry) {
+    return new MessageReader(
+            JsonFormat.parser().usingTypeRegistry(registry),
+            descriptor,
+            new BufferedReader(new StringReader(jsonStr)),
+            "JSON");
   }
 
   @VisibleForTesting
