@@ -18,7 +18,7 @@ import com.google.inject.util.Modules;
 import com.netflix.conductor.cassandra.CassandraModule;
 import com.netflix.conductor.common.utils.ExternalPayloadStorage;
 import com.netflix.conductor.common.utils.JsonMapperProvider;
-import com.netflix.conductor.contribs.http.DynamicProtobufGrpcTask;
+import com.netflix.conductor.contribs.dynamicprotobufgrpc.DynamicProtobufGrpcTask;
 import com.netflix.conductor.contribs.http.HttpTask;
 import com.netflix.conductor.contribs.http.RestClientManager;
 import com.netflix.conductor.contribs.json.JsonJqTransform;

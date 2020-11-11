@@ -1,3 +1,43 @@
+buildscript {
+	dependencies {
+		classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+	}
+}
+
+plugins {
+	id 'java'
+	id 'idea'
+	id "com.google.protobuf" version "0.8.5"
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.12.0"
+	}
+	plugins {
+		grpc {
+			artifact = 'io.grpc:protoc-gen-grpc-java:1.33.1'
+		}
+	}
+	generateProtoTasks {
+		all()*.plugins {
+			grpc {}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		proto {
+			// In addition to the default 'src/main/proto'
+			srcDir 'src/main/proto/com/netflix/conducotr/contribs/dynamicprotobufgrpc/proto'
+		}
+
+	}
+}
+
+
+
 dependencies {
 	
 	compile project(':conductor-common')
@@ -23,4 +63,21 @@ dependencies {
 	testCompile "org.slf4j:slf4j-log4j12:${revSlf4jlog4j}"
 
 	compile "com.netflix.spectator:spectator-reg-metrics3:${revSpectator}"
+
+
+	implementation 'com.google.protobuf:protobuf-java:3.11.0'
+	implementation 'com.google.protobuf:protobuf-java-util:3.11.0'
+
+//	grpc task
+	implementation 'io.grpc:grpc-core:1.33.1'
+	implementation 'io.grpc:grpc-okhttp:1.33.1'
+	implementation 'io.grpc:grpc-protobuf:1.33.1'
+	implementation 'io.grpc:grpc-stub:1.33.1'
+	implementation 'io.grpc:grpc-auth:1.33.1'
+	implementation 'io.grpc:grpc-netty:1.33.1'
+//	implementation 'org.apache.logging.log4j:log4j-api:2.14.0'
+//	implementation 'org.apache.logging.log4j:log4j-core:2.14.0'
+//	implementation 'org.slf4j:slf4j-api:1.7.25'
+	implementation 'com.github.os72:protoc-jar:3.11.4'
+	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 }

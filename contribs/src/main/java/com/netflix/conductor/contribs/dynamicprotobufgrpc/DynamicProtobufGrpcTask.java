@@ -13,35 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.netflix.conductor.contribs.http;
+package com.netflix.conductor.contribs.dynamicprotobufgrpc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.conductor.common.metadata.tasks.Task;
 import com.netflix.conductor.common.metadata.tasks.Task.Status;
 import com.netflix.conductor.common.run.Workflow;
+import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.ServiceCall;
+import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.copiedio.Output;
+import com.netflix.conductor.contribs.dynamicprotobufgrpc.protogen.ConfigProto;
+import com.netflix.conductor.contribs.http.RestClientManager;
 import com.netflix.conductor.core.config.Configuration;
 import com.netflix.conductor.core.execution.WorkflowExecutor;
 import com.netflix.conductor.core.execution.tasks.WorkflowSystemTask;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.oauth.client.OAuthClientFilter;
-import com.sun.jersey.oauth.signature.OAuthParameters;
-import com.sun.jersey.oauth.signature.OAuthSecrets;
+import jdk.internal.loader.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Viren
@@ -92,6 +92,49 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
     @Override
     public void start(Workflow workflow, Task task, WorkflowExecutor executor) {
         logger.info("DynamicProtobufGrpcTask Start gets called");
+//        ConfigProto.OutputConfiguration outputConfig = ConfigProto.OutputConfiguration.newBuilder()
+//                .setDestination(ConfigProto.OutputConfiguration.Destination.LOG)
+//                .setFilePath("C:\\Users\\affezhang\\IdeaProjects\\java_protobuf_demo2\\src\\main\\proto\\output.json")
+//                .build();
+
+
+        URL res = getClass().getClassLoader().getResource("input.json");
+        File file = null;
+        try {
+            file = Paths.get(res.toURI()).toFile();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        String parentPath = file.getParent();
+
+
+        ConfigProto.ProtoConfiguration protoConfig = ConfigProto.ProtoConfiguration.newBuilder()
+                .setUseReflection(false)
+                .setProtoDiscoveryRoot(Paths.get(parentPath, "proto").toString())
+                .build();
+
+        ConfigProto.CallConfiguration callConfig = ConfigProto.CallConfiguration.newBuilder()
+                .setUseTls(false)
+                .setDeadlineMs(50000)
+                .build();
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Output output = Output.forStream(new PrintStream(baos));
+
+
+        ServiceCall.callEndpoint(
+                output,
+                protoConfig,
+                Optional.of("localhost:8980"),
+                Optional.of("routeguide.RouteGuide/GetFeature"),
+                null,
+                null,
+                null,
+                callConfig);
+
+
+        logger.info("The output of calling the endpoint is : {}", baos.toString());
         task.setStatus(Status.COMPLETED);
     }
 
