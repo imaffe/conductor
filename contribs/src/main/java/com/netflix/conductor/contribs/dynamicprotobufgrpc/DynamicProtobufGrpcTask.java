@@ -27,7 +27,6 @@ import com.netflix.conductor.contribs.http.RestClientManager;
 import com.netflix.conductor.core.config.Configuration;
 import com.netflix.conductor.core.execution.WorkflowExecutor;
 import com.netflix.conductor.core.execution.tasks.WorkflowSystemTask;
-import jdk.internal.loader.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
