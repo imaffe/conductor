@@ -9,7 +9,7 @@ services:
       context: ../
       dockerfile: docker/server/Dockerfile
     networks:
-      - internal
+      - default
     ports:
       - 8080:8080
     links:
@@ -34,7 +34,7 @@ services:
       context: ../
       dockerfile: docker/ui/Dockerfile
     networks:
-      - internal
+      - default
     ports:
       - 5000:5000
     links:
@@ -43,7 +43,7 @@ services:
   dynomite:
     image: v1r3n/dynomite
     networks:
-      - internal
+      - default
     ports:
       - 8102:8102
     healthcheck:
@@ -66,7 +66,7 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
     networks:
-      - internal
+      - default
     ports:
       - 9200:9200
       - 9300:9300
