@@ -226,7 +226,7 @@ public interface Configuration {
      */
 
     default String getContribDynamicGrpcProtoDiscoveryRoot() {
-        return getProperty(CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT, CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT_DEFAULT_VALUE)
+        return getProperty(CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT, CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT_DEFAULT_VALUE);
 
     }
 
