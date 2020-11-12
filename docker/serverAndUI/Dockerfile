@@ -14,6 +14,16 @@ COPY ./bin /app
 # Configs
 COPY ./config /app/config
 
+# Get the GNU C to run protoc
+
+RUN apk add --no-cache \
+        perl \
+        wget \
+        openssl \
+        ca-certificates \
+        libc6-compat \
+        libstdc++
+
 # Get all the dependencies
 RUN apt-get update -y \
   && apt-get -y install git curl \

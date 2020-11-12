@@ -19,6 +19,17 @@ FROM openjdk:8-jre-alpine
 
 MAINTAINER Netflix OSS <conductor@netflix.com>
 
+
+# Get the GNU C to run protoc
+
+RUN apk add --no-cache \
+        perl \
+        wget \
+        openssl \
+        ca-certificates \
+        libc6-compat \
+        libstdc++
+
 # Make app folders
 RUN mkdir -p /app/config /app/logs /app/libs
 
