@@ -133,6 +133,9 @@ public interface Configuration {
     String WORKFLOW_REPAIR_SERVICE_ENABLED = "workflow.repairservice.enabled";
     boolean WORKFLOW_REPAIR_SERVICE_ENABLED_DEFAULT_VALUE = false;
 
+    String CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT = "contrib.dynamicgrpc.discoveryroot";
+    String CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT_DEFAULT_VALUE = "/usr/local/conductor-grpc-protos/";
+
     //TODO add constants for input/output external payload related properties.
 
     default DB getDB() {
@@ -216,6 +219,15 @@ public interface Configuration {
      */
     default int getSystemTaskMaxPollCount() {
         return getIntProperty(SYSTEM_TASK_MAX_POLL_COUNT_PROPERTY_NAME, SYSTEM_TASK_MAX_POLL_COUNT_DEFAULT_VALUE);
+    }
+
+    /**
+     * @return the max number of system task to poll from queues
+     */
+
+    default String getContribDynamicGrpcProtoDiscoveryRoot() {
+        return getProperty(CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT, CONTRIB_DYNAMIC_GRPC_PROTO_DISCOVERY_ROOT_DEFAULT_VALUE)
+
     }
 
     /**
@@ -490,6 +502,9 @@ public interface Configuration {
 	 * @return The maximum threshold of the task output payload size in KB beyond which the task input will be rejected and the task will be marked as FAILED_WITH_TERMINAL_ERROR
 	 */
 	Long getMaxTaskOutputPayloadSizeThresholdKB();
+
+
+
 
     enum DB {
         REDIS, DYNOMITE, MEMORY, REDIS_CLUSTER, MYSQL, POSTGRES, CASSANDRA, REDIS_SENTINEL

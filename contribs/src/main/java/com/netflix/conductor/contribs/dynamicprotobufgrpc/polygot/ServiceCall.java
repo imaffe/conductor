@@ -1,5 +1,6 @@
 package com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.copieddynamic.ChannelFactory;
 import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.copieddynamic.CompositeStreamObserver;
 import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.copieddynamic.DynamicGrpcClient;
@@ -24,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -118,7 +118,12 @@ public class ServiceCall {
     logger.info(String.format(
             "Making rpc with %d request(s) to endpoint [%s]", requestMessages.size(), hostAndPort));
     try {
+      // TODO is this async or sync call ?
+      // TODO why it is not catching any future ?
+
       dynamicClient.call(requestMessages, streamObserver, callOptions(callConfig)).get();
+      // TODO here the get means it is sync
+      // TODO Who TF wrote catch Throwable ???
     } catch (Throwable t) {
       throw new RuntimeException("Caught exception while waiting for rpc", t);
     }

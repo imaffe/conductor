@@ -53,7 +53,7 @@ public class MessageReader {
   /** Creates a {@link MessageReader} which reads the messages from a JSON String. */
 
   // TODO need to optimize this as we don't really need to read from a stream ?
-  public static MessageReader forString(String jsonStr, Descriptor descriptor, TypeRegistry registry) {
+  public static MessageReader forString(Object jsonStr, Descriptor descriptor, TypeRegistry registry) {
     return new MessageReader(
             JsonFormat.parser().usingTypeRegistry(registry),
             descriptor,

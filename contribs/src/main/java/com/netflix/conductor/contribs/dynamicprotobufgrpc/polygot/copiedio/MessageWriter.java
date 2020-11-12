@@ -63,6 +63,8 @@ public class MessageWriter<T extends Message> implements StreamObserver<T> {
 
   @Override
   public void onCompleted() {
+    // TODO why shouldn't we close the output, maybe when it is complete ? Or the output could
+    // be used across multiple Message Writers?
     // Nothing to do.
   }
 
