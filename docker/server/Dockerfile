@@ -31,7 +31,9 @@ RUN apk add --no-cache \
         libstdc++
 
 # Make app folders
-RUN mkdir -p /app/config /app/logs /app/libs
+RUN mkdir -p /app/config /app/logs /app/libs /usr/local/conductor-grpc-protos
+
+COPY ../../contribs/src/main/resources/proto/*.proto /usr/local/conductor-grpc-protos/
 
 # Copy the project directly onto the image
 COPY --from=builder /conductor/docker/server/bin /app
