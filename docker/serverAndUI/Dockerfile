@@ -6,13 +6,16 @@ FROM openjdk:8-jdk
 MAINTAINER Netflix OSS <conductor@netflix.com>
 
 # Make app folders
-RUN mkdir -p /app/config /app/logs /app/libs
+RUN mkdir -p /app/config /app/logs /app/libs /usr/local/conductor-grpc-protos
 
 # Startup script(s)
 COPY ./bin /app
 
 # Configs
 COPY ./config /app/config
+
+
+COPY ../../contribs/src/main/resources/proto/*.proto /usr/local/conductor-grpc-protos/
 
 # Get the GNU C to run protoc
 
