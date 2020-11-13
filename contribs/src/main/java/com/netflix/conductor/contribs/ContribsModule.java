@@ -72,7 +72,6 @@ public class ContribsModule extends AbstractModule {
 	// TODO AWS SQS became one member of observer manager
 	@Provides
 	public Map<Status, ObservableQueue> getQueues(Configuration config, AWSCredentialsProvider acp) {
-		
 		String stack = "";
 		if(config.getStack() != null && config.getStack().length() > 0) {
 			stack = config.getStack() + "_";
