@@ -33,12 +33,13 @@ RUN apk add --no-cache \
 # Make app folders
 RUN mkdir -p /app/config /app/logs /app/libs /usr/local/conductor-grpc-protos
 
-COPY ./proto/ /usr/local/conductor-grpc-protos/
+
 
 # Copy the project directly onto the image
 COPY --from=builder /conductor/docker/server/bin /app
 COPY --from=builder /conductor/docker/server/config /app/config
 COPY --from=builder /conductor/server/build/libs/conductor-server-*-all.jar /app/libs
+COPY  --from=builder /conductor/docker/server/proto/ /usr/local/conductor-grpc-protos/
 
 # Copy the files for the server into the app folders
 RUN chmod +x /app/startup.sh
