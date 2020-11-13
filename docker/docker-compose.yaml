@@ -10,9 +10,6 @@ services:
       dockerfile: docker/server/Dockerfile
     networks:
       - default
-
-
-    network_mode: "host"
     ports:
       - 8080:8080
     links:
