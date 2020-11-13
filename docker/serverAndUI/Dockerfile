@@ -15,7 +15,7 @@ COPY ./bin /app
 COPY ./config /app/config
 
 
-COPY ../../contribs/src/main/resources/proto/*.proto /usr/local/conductor-grpc-protos/
+COPY ../../contribs/src/main/resources/proto/ /usr/local/conductor-grpc-protos/
 
 # Get the GNU C to run protoc
 
