@@ -22,7 +22,8 @@ RUN apk add --no-cache \
         openssl \
         ca-certificates \
         libc6-compat \
-        libstdc++
+        libstdc++ && \
+        ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
 
 # Get all the dependencies
 RUN apt-get update -y \

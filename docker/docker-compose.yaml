@@ -8,8 +8,11 @@ services:
     build:
       context: ../
       dockerfile: docker/server/Dockerfile
-    networks:
-      - default
+#    networks:
+#      - default
+
+
+    network_mode: "host"
     ports:
       - 8080:8080
     links:
@@ -33,8 +36,9 @@ services:
     build:
       context: ../
       dockerfile: docker/ui/Dockerfile
-    networks:
-      - default
+#    networks:
+#      - default
+    network_mode: "host"
     ports:
       - 5000:5000
     links:
@@ -42,8 +46,9 @@ services:
 
   dynomite:
     image: v1r3n/dynomite
-    networks:
-      - default
+#    networks:
+#      - default
+    network_mode: "host"
     ports:
       - 8102:8102
     healthcheck:
@@ -65,8 +70,9 @@ services:
       - transport.host=0.0.0.0
       - discovery.type=single-node
       - xpack.security.enabled=false
-    networks:
-      - default
+#    networks:
+#      - default
+    network_mode: "host"
     ports:
       - 9200:9200
       - 9300:9300
