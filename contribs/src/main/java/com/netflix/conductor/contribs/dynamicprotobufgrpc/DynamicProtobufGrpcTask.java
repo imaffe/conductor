@@ -24,11 +24,13 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.protobuf.DescriptorProtos;
 import com.netflix.conductor.common.metadata.tasks.Task;
 import com.netflix.conductor.common.metadata.tasks.Task.Status;
 import com.netflix.conductor.common.run.Workflow;
 import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.ServiceCall;
 import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.copiedio.Output;
+import com.netflix.conductor.contribs.dynamicprotobufgrpc.polygot.copiedprotobuf.ProtocInvoker;
 import com.netflix.conductor.contribs.dynamicprotobufgrpc.protogen.ConfigProto;
 import com.netflix.conductor.contribs.http.RestClientManager;
 import com.netflix.conductor.core.config.Configuration;
@@ -77,6 +79,8 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
 
     private String requestParameter;
 
+    private DescriptorProtos.FileDescriptorSet fileDescriptorSet;
+
     private static final String TMP_JSON_INPUT = "{\"latitude\": 407838351, \"longitude\": -746143763}";
 
     @Inject
@@ -95,7 +99,22 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
         this.config = config;
         this.objectMapper = objectMapper;
         this.requestParameter = REQUEST_PARAMETER_NAME;
+
         logger.info("DynamicProtobufGrpcTask initialized...");
+
+        // TODO below is not the standard way to instantiate the class, as it makes
+        // TODO the server implementation stateful
+        ConfigProto.ProtoConfiguration protoConfig = ConfigProto.ProtoConfiguration.newBuilder()
+                .setUseReflection(false)
+                .setProtoDiscoveryRoot(this.config.getContribDynamicGrpcProtoDiscoveryRoot())
+                .build();
+        try {
+            this.fileDescriptorSet = ProtocInvoker.forConfig(protoConfig).invoke();
+        } catch (ProtocInvoker.ProtocInvocationException e) {
+            logger.info("Error instantiate fileDescriptorSet on startup");
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -142,6 +161,7 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
             return;
         }
         ServiceCall.callEndpoint(
+                this.fileDescriptorSet,
                 inputStr,
                 output,
                 protoConfig,

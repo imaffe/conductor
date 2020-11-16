@@ -34,6 +34,7 @@ public class ServiceCall {
 
   /** Calls the endpoint specified in the arguments */
   public static void callEndpoint(
+          FileDescriptorSet defaultFileDescriptorSet,
           String jsonInput,
           Output output,
           ConfigProto.ProtoConfiguration protoConfig,
@@ -79,17 +80,18 @@ public class ServiceCall {
 //    }
 
     // TODO can we use .class file here ?
-    if (reflectionDescriptors.isPresent()) {
-      logger.info("Using proto descriptors fetched by reflection");
-      fileDescriptorSet = reflectionDescriptors.get();
-    } else {
-      try {
-        fileDescriptorSet = ProtocInvoker.forConfig(protoConfig).invoke();
-        logger.info("Using proto descriptors obtained from protoc");
-      } catch (Throwable t) {
-        throw new RuntimeException("Unable to resolve service by invoking protoc", t);
-      }
-    }
+//    if (reflectionDescriptors.isPresent()) {
+//      logger.info("Using proto descriptors fetched by reflection");
+//      fileDescriptorSet = reflectionDescriptors.get();
+//    } else {
+//      try {
+//        fileDescriptorSet = ProtocInvoker.forConfig(protoConfig).invoke();
+//        logger.info("Using proto descriptors obtained from protoc");
+//      } catch (Throwable t) {
+//        throw new RuntimeException("Unable to resolve service by invoking protoc", t);
+//      }
+//    }
+    fileDescriptorSet = defaultFileDescriptorSet;
 
     // Set up the dynamic client and make the call.
     ServiceResolver serviceResolver = ServiceResolver.fromFileDescriptorSet(fileDescriptorSet);

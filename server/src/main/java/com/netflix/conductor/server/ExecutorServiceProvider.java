@@ -20,6 +20,7 @@ public class ExecutorServiceProvider implements Provider<ExecutorService> {
     public ExecutorServiceProvider(Configuration configuration) {
         this.configuration = configuration;
         // TODO Use configuration to set max threads.
+        // TODO here is the max thread of each jetty server
         this.executorService = java.util.concurrent.Executors.newFixedThreadPool(MAX_THREADS, buildThreadFactory());
     }
 

@@ -994,6 +994,7 @@ public class WorkflowExecutor {
     // TODO is this the entrace of the workflow execution ?
     public boolean decide(String workflowId) {
         long allStartTime = System.currentTimeMillis();
+        // TODO wow, different tasks could be "decided on different machines"
         if (!executionLockService.acquireLock(workflowId)) {
             return false;
         }
@@ -1480,7 +1481,10 @@ public class WorkflowExecutor {
                 if (!workflowSystemTask.isAsync()) {
                     try {
                         deciderService.populateTaskData(task);
+                        long executeTime = System.currentTimeMillis();
                         workflowSystemTask.start(workflow, task, this);
+                        long executeEndTime = System.currentTimeMillis();
+                        LOGGER.info("[AFFE] gRPC call took time {} ms", executeEndTime - executeTime);
                     } catch (Exception e) {
                         String errorMsg = String.format("Unable to start system task: %s, {id: %s, name: %s}", task.getTaskType(), task.getTaskId(), task.getTaskDefName());
                         throw new ApplicationException(Code.INTERNAL_ERROR, errorMsg, e);
