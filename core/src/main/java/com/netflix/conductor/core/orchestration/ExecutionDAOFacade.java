@@ -378,6 +378,7 @@ public class ExecutionDAOFacade {
              * If it *is* enabled, tasks will be indexed only when a workflow is in terminal state.
              */
             if (!config.enableAsyncIndexing()) {
+                // TODO here might be the problem, we are writing index
             	indexDAO.indexTask(task);
             }
         } catch (Exception e) {
