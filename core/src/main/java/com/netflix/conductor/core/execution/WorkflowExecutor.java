@@ -1491,8 +1491,13 @@ public class WorkflowExecutor {
                     }
                     //  TODO sync systemTask started
                     startedSystemTasks = true;
+                    long externalStartTime = System.currentTimeMillis();
                     deciderService.externalizeTaskData(task);
+                    long externalEndTime = System.currentTimeMillis();
+                    LOGGER.info("[AFFE] gRPC call took time {} ms", externalEndTime - externalStartTime);
                     executionDAOFacade.updateTask(task);
+                    long daoEndTime = System.currentTimeMillis();
+                    LOGGER.info("[AFFE] gRPC call took time {} ms", daoEndTime - externalEndTime);
                 } else {
                     tasksToBeQueued.add(task);
                 }
