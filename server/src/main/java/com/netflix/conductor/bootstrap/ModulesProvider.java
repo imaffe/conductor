@@ -78,6 +78,7 @@ public class ModulesProvider implements Provider<List<AbstractModule>> {
         return singletonList(resolvedModule);
     }
 
+    // TODO here is the module selector
     private List<AbstractModule> selectModulesToLoad() {
         Configuration.DB database;
         List<AbstractModule> modules = new ArrayList<>();
