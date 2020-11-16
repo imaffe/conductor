@@ -998,13 +998,18 @@ public class WorkflowExecutor {
             return false;
         }
 
+        long lockAcquireTime = System.currentTimeMillis();
+        LOGGER.info("[AFFE DEBUG] lock took time : {} ms", lockAcquireTime - allStartTime);
+
         // If it is a new workflow, the tasks will be still empty even though include tasks is true
         Workflow workflow = executionDAOFacade.getWorkflowById(workflowId, true);
-
+        long workflowRetriveTime = System.currentTimeMillis();
+        LOGGER.info("[AFFE DEBUG] retrieve workflow from dao took time : {} ms", workflowRetriveTime - lockAcquireTime);
         // FIXME Backwards compatibility for legacy workflows already running.
         // This code will be removed in a future version.
         workflow = metadataMapperService.populateWorkflowWithDefinitions(workflow);
-
+        long mapperRetrieveTime = System.currentTimeMillis();
+        LOGGER.info("[AFFE DEBUG] retrieve workflow from mapper service took time : {} ms", mapperRetrieveTime - workflowRetriveTime);
         if (workflow.getStatus().isTerminal()) {
             return true;
         }
