@@ -111,6 +111,7 @@ public class DeciderService {
         return decide(workflow, tasksToBeScheduled);
     }
 
+    // TODO this is the core component of the
     private DeciderOutcome decide(final Workflow workflow, List<Task> preScheduledTasks) throws TerminateWorkflowException {
 
         DeciderOutcome outcome = new DeciderOutcome();

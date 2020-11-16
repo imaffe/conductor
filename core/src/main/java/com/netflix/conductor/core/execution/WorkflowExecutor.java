@@ -1083,20 +1083,25 @@ public class WorkflowExecutor {
             // TODO execution DAO is updated, might trigger some workflow
             if (!outcome.tasksToBeUpdated.isEmpty() || !tasksToBeScheduled.isEmpty()) {
                 // TODO udpate the first batch of tasks , sync workflowSystemTasks
+                long startTime = System.currentTimeMillis();
                 executionDAOFacade.updateTasks(tasksToBeUpdated);
                 executionDAOFacade.updateWorkflow(workflow);
+                long endTime = System.currentTimeMillis();
+                LOGGER.info("[AFFE DEBUG] executaionDAO update task data took time : {} ms", endTime - startTime);
             }
 
             // TODO scheduleTask ? is the blocking
+
             long scheduleStartTime = System.currentTimeMillis();
+            LOGGER.info("[AFFE DEBUG] schedule start minus decide ends time: {}", scheduleStartTime - decideEndTime);
             stateChanged = scheduleTask(workflow, tasksToBeScheduled) || stateChanged;
             long scheduleEndTime = System.currentTimeMillis();
-            LOGGER.info("[AFFE DEBUG] schedule took took time : {} ms", scheduleEndTime - scheduleStartTime);
+            LOGGER.info("[AFFE DEBUG] schedule took time (including execution): {} ms", scheduleEndTime - scheduleStartTime);
             // TODO decide is a recursive call, when sync systemTasks are exectued, we need to trigger
             // a new decide right away
 
             long allEndTime = System.currentTimeMillis();
-            LOGGER.info("[AFFE DEBUG] all decide took took time : {} ms", allEndTime - allStartTime);
+            LOGGER.info("[AFFE DEBUG] all decide took time : {} ms", allEndTime - allStartTime);
             if (stateChanged) {
                 decide(workflowId);
             }
