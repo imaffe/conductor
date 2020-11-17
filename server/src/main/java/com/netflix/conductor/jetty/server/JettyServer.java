@@ -28,8 +28,11 @@ import java.util.Map;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.jmx.MBeanContainer;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +67,13 @@ public class JettyServer implements Lifecycle {
             throw new IllegalStateException("Server is already running");
         }
 
-        this.server = new Server(port);
+        QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 100);
+        this.server = new Server(queuedThreadPool);
+
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(port);
+        server.setConnectors(new Connector[] { connector });
+
 
         ServletContextHandler context = new ServletContextHandler();
         context.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
