@@ -1454,7 +1454,7 @@ public class WorkflowExecutor {
         List<Task> createdTasks;
         List<Task> tasksToBeQueued;
         boolean startedSystemTasks = false;
-
+        long scheduleStartTime = System.currentTimeMillis();
         try {
             if (tasks == null || tasks.isEmpty()) {
                 return false;
@@ -1523,10 +1523,12 @@ public class WorkflowExecutor {
                     // TODO when end time is set
                     executionDAOFacade.updateTask(task);
                     long daoEndTime = System.currentTimeMillis();
-                    LOGGER.info("[AFFE] task start to dao end {} ms, \n" +
+                    LOGGER.info("[AFFE] schedule to task start {} ms \n" +
+                            "task start to dao end {} ms (execution time + dao + index), \n" +
                             "gRPC call took time {} ms , \n" +
-                            "externalize call took time {} ms ,\n" +
-                            "dao update call took time {} ms \n",
+                            "externalize data took time {} ms ,\n" +
+                            "dao update took time {} ms \n",
+                            taskStartTime - scheduleStartTime,
                             daoEndTime - taskStartTime,
                             executeEndTime - executeTime,
                             externalEndTime - externalStartTime,
