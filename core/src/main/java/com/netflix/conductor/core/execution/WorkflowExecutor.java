@@ -1000,17 +1000,17 @@ public class WorkflowExecutor {
         }
 
         long lockAcquireTime = System.currentTimeMillis();
-        LOGGER.info("[AFFE DEBUG] lock took time : {} ms", lockAcquireTime - allStartTime);
+
 
         // If it is a new workflow, the tasks will be still empty even though include tasks is true
         Workflow workflow = executionDAOFacade.getWorkflowById(workflowId, true);
         long workflowRetriveTime = System.currentTimeMillis();
-        LOGGER.info("[AFFE DEBUG] retrieve workflow from dao took time : {} ms", workflowRetriveTime - lockAcquireTime);
+
         // FIXME Backwards compatibility for legacy workflows already running.
         // This code will be removed in a future version.
         workflow = metadataMapperService.populateWorkflowWithDefinitions(workflow);
         long mapperRetrieveTime = System.currentTimeMillis();
-        LOGGER.info("[AFFE DEBUG] retrieve workflow from mapper service took time : {} ms", mapperRetrieveTime - workflowRetriveTime);
+
         if (workflow.getStatus().isTerminal()) {
             return true;
         }
@@ -1021,7 +1021,7 @@ public class WorkflowExecutor {
             long decideStartTime = System.currentTimeMillis();
             DeciderService.DeciderOutcome outcome = deciderService.decide(workflow);
             long decideEndTime = System.currentTimeMillis();
-            LOGGER.info("[AFFE DEBUG] decider took time : {} ms", decideEndTime - decideStartTime);
+
             if (outcome.isComplete) {
                 completeWorkflow(workflow);
                 return true;
@@ -1087,27 +1087,44 @@ public class WorkflowExecutor {
             }
 
             // TODO execution DAO is updated, might trigger some workflow
+            long updateStartTime = 0;
+            long updateEndTime = 1;
             if (!outcome.tasksToBeUpdated.isEmpty() || !tasksToBeScheduled.isEmpty()) {
                 // TODO udpate the first batch of tasks , sync workflowSystemTasks
-                long startTime = System.currentTimeMillis();
+                updateStartTime = System.currentTimeMillis();
                 executionDAOFacade.updateTasks(tasksToBeUpdated);
                 executionDAOFacade.updateWorkflow(workflow);
-                long endTime = System.currentTimeMillis();
-                LOGGER.info("[AFFE DEBUG] executaionDAO update task data took time : {} ms", endTime - startTime);
+                updateEndTime = System.currentTimeMillis();
+
             }
 
             // TODO scheduleTask ? is the blocking
 
             long scheduleStartTime = System.currentTimeMillis();
-            LOGGER.info("[AFFE DEBUG] schedule start minus decide ends time: {}", scheduleStartTime - decideEndTime);
+
             stateChanged = scheduleTask(workflow, tasksToBeScheduled) || stateChanged;
             long scheduleEndTime = System.currentTimeMillis();
-            LOGGER.info("[AFFE DEBUG] schedule took time (including execution): {} ms", scheduleEndTime - scheduleStartTime);
+
             // TODO decide is a recursive call, when sync systemTasks are exectued, we need to trigger
             // a new decide right away
 
             long allEndTime = System.currentTimeMillis();
-            LOGGER.info("[AFFE DEBUG] all decide took time : {} ms", allEndTime - allStartTime);
+            LOGGER.info("[AFFE DEBUG] lock took time : {} ms \n" +
+                    " retrieve workflow from mapper service took time : {} ms ,\n" +
+                    " decider took time : {} ms,\n" +
+                    " executaionDAO update task data took time : {} ms ,\n" +
+                    " schedule start minus decide ends time: {} ,\n" +
+                    " schedule took time (including execution): {} ms,\n " +
+                    " all decide took time : {} ms \n",
+                    lockAcquireTime - allStartTime,
+                    mapperRetrieveTime - workflowRetriveTime,
+                    decideEndTime - decideStartTime,
+                    updateEndTime - updateStartTime,
+                    scheduleStartTime - decideEndTime,
+                    scheduleEndTime - scheduleStartTime,
+                    allEndTime - allStartTime);
+
+
             if (stateChanged) {
                 decide(workflowId);
             }
@@ -1479,12 +1496,14 @@ public class WorkflowExecutor {
                 }
                 // SYNC TASK
                 if (!workflowSystemTask.isAsync()) {
+                    long executeTime = 0;
+                    long executeEndTime = 0;
                     try {
                         deciderService.populateTaskData(task);
-                        long executeTime = System.currentTimeMillis();
+                        executeTime = System.currentTimeMillis();
                         workflowSystemTask.start(workflow, task, this);
-                        long executeEndTime = System.currentTimeMillis();
-                        LOGGER.info("[AFFE] gRPC call took time {} ms", executeEndTime - executeTime);
+                        executeEndTime = System.currentTimeMillis();
+
                     } catch (Exception e) {
                         String errorMsg = String.format("Unable to start system task: %s, {id: %s, name: %s}", task.getTaskType(), task.getTaskId(), task.getTaskDefName());
                         throw new ApplicationException(Code.INTERNAL_ERROR, errorMsg, e);
@@ -1494,10 +1513,15 @@ public class WorkflowExecutor {
                     long externalStartTime = System.currentTimeMillis();
                     deciderService.externalizeTaskData(task);
                     long externalEndTime = System.currentTimeMillis();
-                    LOGGER.info("[AFFE] gRPC call took time {} ms", externalEndTime - externalStartTime);
+
                     executionDAOFacade.updateTask(task);
                     long daoEndTime = System.currentTimeMillis();
-                    LOGGER.info("[AFFE] gRPC call took time {} ms", daoEndTime - externalEndTime);
+                    LOGGER.info("[AFFE] gRPC call took time {} ms , \n" +
+                            "externalize call took time {} ms ,\n" +
+                            "dao update call took time {} ms \n",
+                            executeEndTime - executeTime,
+                            externalEndTime - externalStartTime,
+                            daoEndTime - externalEndTime);
                 } else {
                     tasksToBeQueued.add(task);
                 }
