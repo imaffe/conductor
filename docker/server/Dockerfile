@@ -11,7 +11,7 @@ RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME /home/gradle/cache_home
 COPY build.gradle /home/gradle/java-code/
 WORKDIR /home/gradle/java-code
-RUN gradle clean build -i --stacktrace
+RUN ./gradlew clean build -i --stacktrace
 
 
 FROM openjdk:8-jdk AS builder
