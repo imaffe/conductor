@@ -23,6 +23,7 @@ MAINTAINER Netflix OSS <conductor@netflix.com>
 # Get the GNU C to run protoc
 
 RUN apk add --no-cache \
+        curl \
         perl \
         wget \
         openssl \
