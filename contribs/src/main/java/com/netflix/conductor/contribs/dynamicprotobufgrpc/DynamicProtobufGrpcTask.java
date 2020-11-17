@@ -119,6 +119,7 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
 
     @Override
     public void start(Workflow workflow, Task task, WorkflowExecutor executor) {
+
         logger.info("DynamicProtobufGrpcTask Start gets called");
 //        ConfigProto.OutputConfiguration outputConfig = ConfigProto.OutputConfiguration.newBuilder()
 //                .setDestination(ConfigProto.OutputConfiguration.Destination.LOG)
@@ -134,6 +135,18 @@ public class DynamicProtobufGrpcTask extends WorkflowSystemTask {
         }
 
         Input input = objectMapper.convertValue(request, Input.class);
+
+        // TODO magic number for sleep, delete this
+        if (input.fullService.equals("SLEEP")) {
+            try {
+                Thread.sleep(input.timeoutInMillis);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            task.setStatus(Status.COMPLETED);
+            return;
+
+        }
 
         ConfigProto.ProtoConfiguration protoConfig = ConfigProto.ProtoConfiguration.newBuilder()
                 .setUseReflection(false)
