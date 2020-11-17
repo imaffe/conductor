@@ -198,6 +198,7 @@ public class ExecutionDAOFacade {
         workflow.setCreateTime(System.currentTimeMillis());
         executionDAO.createWorkflow(workflow);
         // Add to decider queue
+        // TODO Why do we push to queueDAO here
         queueDAO.push(DECIDER_QUEUE, workflow.getWorkflowId(), workflow.getPriority(), config.getSweepFrequency());
         if(config.enableAsyncIndexing()) {
             indexDAO.asyncIndexWorkflow(workflow);
