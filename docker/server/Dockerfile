@@ -4,14 +4,14 @@
 
 # 0. Builder stage
 
-FROM openjdk:8-jdk AS cache
+FROM gradle:5.6.4-jdk11 AS cache
 COPY . /conductor
 WORKDIR /conductor
 RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME /home/gradle/cache_home
 COPY gradlew build.gradle /home/gradle/java-code/
 WORKDIR /home/gradle/java-code
-RUN ./gradlew clean build -i --stacktrace
+RUN gradle clean build -i --stacktrace
 
 
 FROM openjdk:8-jdk AS builder
