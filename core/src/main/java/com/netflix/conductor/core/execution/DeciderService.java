@@ -699,6 +699,7 @@ public class DeciderService {
         // for static forks, each branch of the fork creates a join task upon completion
         // for dynamic forks, a join task is created with the fork and also with each branch of the fork
         // a new task must only be scheduled if a task with the same reference name is not already in this workflow instance
+        // TODO this is when the scheduled time is specified
         List<Task> tasks = taskMappers.get(taskType.name()).getMappedTasks(taskMapperContext).stream()
                 .filter(task -> !tasksInWorkflow.contains(task.getReferenceTaskName()))
                 .collect(Collectors.toList());

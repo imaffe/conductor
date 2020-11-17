@@ -381,6 +381,7 @@ public class WorkflowExecutor {
         workflow.setParentWorkflowId(parentWorkflowId);
         workflow.setParentWorkflowTaskId(parentWorkflowTaskId);
         workflow.setOwnerApp(WorkflowContext.get().getClientApp());
+        // TODO here is the create time
         workflow.setCreateTime(System.currentTimeMillis());
         workflow.setUpdatedBy(null);
         workflow.setUpdateTime(null);
@@ -871,6 +872,7 @@ public class WorkflowExecutor {
         }
 
         if (task.getStatus().isTerminal()) {
+            // TODO when the end time is set
             task.setEndTime(System.currentTimeMillis());
         }
 
@@ -1487,11 +1489,14 @@ public class WorkflowExecutor {
 
             // Traverse through all the system tasks, start the sync tasks, in case of async queue the tasks
             for (Task task : systemTasks) {
+                long taskStartTime = 0;
                 WorkflowSystemTask workflowSystemTask = WorkflowSystemTask.get(task.getTaskType());
                 if (workflowSystemTask == null) {
                     throw new ApplicationException(NOT_FOUND, "No system task found by name " + task.getTaskType());
                 }
                 if (task.getStatus() != null && !task.getStatus().isTerminal() && task.getStartTime() == 0) {
+                    // TODO when start time is set
+                    taskStartTime = System.currentTimeMillis();
                     task.setStartTime(System.currentTimeMillis());
                 }
                 // SYNC TASK
@@ -1514,11 +1519,15 @@ public class WorkflowExecutor {
                     deciderService.externalizeTaskData(task);
                     long externalEndTime = System.currentTimeMillis();
 
+
+                    // TODO when end time is set
                     executionDAOFacade.updateTask(task);
                     long daoEndTime = System.currentTimeMillis();
-                    LOGGER.info("[AFFE] gRPC call took time {} ms , \n" +
+                    LOGGER.info("[AFFE] task start to dao end {} ms, \n" +
+                            "gRPC call took time {} ms , \n" +
                             "externalize call took time {} ms ,\n" +
                             "dao update call took time {} ms \n",
+                            daoEndTime - taskStartTime,
                             executeEndTime - executeTime,
                             externalEndTime - externalStartTime,
                             daoEndTime - externalEndTime);

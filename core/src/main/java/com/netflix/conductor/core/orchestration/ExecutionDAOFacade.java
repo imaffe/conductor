@@ -366,6 +366,7 @@ public class ExecutionDAOFacade {
                 if (!task.getStatus().isTerminal() || (task.getStatus().isTerminal() && task.getUpdateTime() == 0)) {
                     task.setUpdateTime(System.currentTimeMillis());
                 }
+                // TODO when the end time is set
                 if (task.getStatus().isTerminal() && task.getEndTime() == 0) {
                     task.setEndTime(System.currentTimeMillis());
                 }
