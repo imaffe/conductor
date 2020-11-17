@@ -4,7 +4,7 @@
 
 # 0. Builder stage
 
-FROM gradle:5.6.4-jdk11 AS cache
+FROM gradle:5.6.4-jdk8 AS cache
 COPY . /conductor
 WORKDIR /conductor
 RUN mkdir -p /home/gradle/cache_home
@@ -14,7 +14,7 @@ WORKDIR /home/gradle/conductor
 RUN gradle clean build -i --stacktrace
 
 
-FROM openjdk:8-jdk AS builder
+FROM gradle:5.6.4-jdk8 AS builder
 
 MAINTAINER Netflix OSS <conductor@netflix.com>
 # move the cache
