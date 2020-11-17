@@ -113,7 +113,7 @@ public class DeciderService {
 
     // TODO this is the core component of the
     private DeciderOutcome decide(final Workflow workflow, List<Task> preScheduledTasks) throws TerminateWorkflowException {
-
+        long debugStartTime = System.currentTimeMillis();
         DeciderOutcome outcome = new DeciderOutcome();
 
         if (workflow.getStatus().isTerminal()) {

@@ -362,7 +362,7 @@ public class WorkflowExecutor {
             String event,
             Map<String, String> taskToDomain
     ) {
-
+        long workflowStartTime = System.currentTimeMillis();
         workflowDefinition = metadataMapperService.populateTaskDefinitions(workflowDefinition);
 
         // perform validations
@@ -400,10 +400,17 @@ public class WorkflowExecutor {
 
         try {
             // TODO is this creating workflow in the db ??
+            long createStart = System.currentTimeMillis();
             executionDAOFacade.createWorkflow(workflow);
+            long createEnd = System.currentTimeMillis();
             LOGGER.debug("A new instance of workflow: {} created with id: {}", workflow.getWorkflowName(), workflowId);
             //then decide to see if anything needs to be done as part of the workflow
             decide(workflowId);
+            long workflowEndTime = System.currentTimeMillis();
+            LOGGER.info("[AFFE] create workflow spend: {} ,\n" +
+                    "workflow execution took totaly: {} ms",
+                    createEnd - createStart,
+                    workflowEndTime - workflowStartTime);
             return workflowId;
         } catch (Exception e) {
             Monitors.recordWorkflowStartError(workflowDefinition.getName(), WorkflowContext.get().getClientApp());
