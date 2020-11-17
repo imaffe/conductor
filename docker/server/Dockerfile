@@ -3,10 +3,22 @@
 #
 
 # 0. Builder stage
+
+FROM openjdk:8-jdk AS cache
+COPY . /conductor
+WORKDIR /conductor
+RUN mkdir -p /home/gradle/cache_home
+ENV GRADLE_USER_HOME /home/gradle/cache_home
+COPY build.gradle /home/gradle/java-code/
+WORKDIR /home/gradle/java-code
+RUN gradle clean build -i --stacktrace
+
+
 FROM openjdk:8-jdk AS builder
 
 MAINTAINER Netflix OSS <conductor@netflix.com>
-
+# move the cache
+COPY --from=cache /home/gradle/cache_home /home/gradle/.gradle
 # Copy the project directly onto the image
 COPY . /conductor
 WORKDIR /conductor
