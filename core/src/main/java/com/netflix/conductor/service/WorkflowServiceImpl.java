@@ -173,11 +173,15 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Service
     public String startWorkflow(String name, Integer version, String correlationId, Integer priority,
                                 Map<String, Object> input) {
+        long startTime = System.currentTimeMillis();
         WorkflowDef workflowDef = metadataService.getWorkflowDef( name, version );
         if (workflowDef == null) {
             throw new ApplicationException(ApplicationException.Code.NOT_FOUND, String.format("No such workflow found by name: %s, version: %d", name, version));
         }
-        return workflowExecutor.startWorkflow(workflowDef.getName(), workflowDef.getVersion(), correlationId, priority, input, null);
+        String workflowId = workflowExecutor.startWorkflow(workflowDef.getName(), workflowDef.getVersion(), correlationId, priority, input, null);
+        long endTime = System.currentTimeMillis();
+        LOGGER.info("[AFFE] workflow execution plus retrieve totaly : {} ms" , endTime - startTime);
+        return workflowId;
     }
 
     /**
