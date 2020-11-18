@@ -21,6 +21,7 @@ import com.netflix.conductor.common.utils.JsonMapperProvider;
 import com.netflix.conductor.service.Lifecycle;
 import com.sun.jersey.api.client.Client;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,6 +76,11 @@ public class JettyServer implements Lifecycle {
         MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(256);
         // QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 200, new SynchronousQueue<>());
         this.server = new Server(queuedThreadPool);
+
+
+        // Enable JMX on Jetty
+        MBeanContainer mbeanContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
+        server.addBean(mbeanContainer);
 
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
