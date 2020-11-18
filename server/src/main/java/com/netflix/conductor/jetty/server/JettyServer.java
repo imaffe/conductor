@@ -73,7 +73,7 @@ public class JettyServer implements Lifecycle {
         }
 
         // MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(256);
-        QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 200, new SynchronousQueue<>())
+        QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 200, new SynchronousQueue<>());
         this.server = new Server(queuedThreadPool);
 
         ServerConnector connector = new ServerConnector(server);
