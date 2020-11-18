@@ -12,6 +12,7 @@ services:
       - default
     ports:
       - 8080:8080
+      - 9102:9102
     links:
       - elasticsearch:es
       - dynomite:dyno1
