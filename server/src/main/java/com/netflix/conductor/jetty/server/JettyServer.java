@@ -73,7 +73,7 @@ public class JettyServer implements Lifecycle {
             throw new IllegalStateException("Server is already running");
         }
 
-        MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(256);
+        MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(1000);
         // QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 200, new SynchronousQueue<>());
         this.server = new Server(queuedThreadPool);
 
