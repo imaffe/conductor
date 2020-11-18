@@ -30,4 +30,6 @@ if [ -z "$LOG4J_PROP" ];
     export log4j_file=/app/config/$LOG4J_PROP
 fi
 
-java -jar conductor-server-*-all.jar $config_file $log4j_file
+java -jar -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9102 \
+-Dcom.sun.management.jmxremote.authenticate=false \
+-Dcom.sun.management.jmxremote.ssl=false conductor-server-*-all.jar $config_file $log4j_file

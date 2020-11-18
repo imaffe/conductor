@@ -32,6 +32,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ public class JettyServer implements Lifecycle {
             throw new IllegalStateException("Server is already running");
         }
 
-        QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 100);
+        MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(200, 100);
         this.server = new Server(queuedThreadPool);
 
         ServerConnector connector = new ServerConnector(server);

@@ -63,6 +63,7 @@ RUN chmod +x /app/startup.sh
 
 EXPOSE 8080
 EXPOSE 8090
+EXPOSE 9102
 
 CMD [ "/app/startup.sh" ]
 ENTRYPOINT [ "/bin/sh"]
