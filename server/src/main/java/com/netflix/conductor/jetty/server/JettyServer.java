@@ -25,6 +25,9 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -34,6 +37,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +72,8 @@ public class JettyServer implements Lifecycle {
             throw new IllegalStateException("Server is already running");
         }
 
-        MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(256);
+        // MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(256);
+        QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 200, new SynchronousQueue<>())
         this.server = new Server(queuedThreadPool);
 
         ServerConnector connector = new ServerConnector(server);

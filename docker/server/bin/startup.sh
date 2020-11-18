@@ -32,4 +32,6 @@ fi
 
 java -jar -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9102 \
 -Dcom.sun.management.jmxremote.authenticate=false \
--Dcom.sun.management.jmxremote.ssl=false conductor-server-*-all.jar $config_file $log4j_file
+-Dcom.sun.management.jmxremote.ssl=false \
+-Djava.rmi.server.hostname=127.0.0.1 \
+conductor-server-*-all.jar $config_file $log4j_file
