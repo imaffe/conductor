@@ -73,9 +73,14 @@ public class WorkflowServiceImpl implements WorkflowService {
      */
     @Service
     public String startWorkflow(StartWorkflowRequest startWorkflowRequest) {
-        return startWorkflow(startWorkflowRequest.getName(), startWorkflowRequest.getVersion(), startWorkflowRequest.getCorrelationId(),
+        long startTime = System.currentTimeMillis();
+        String workflowId = startWorkflow(startWorkflowRequest.getName(), startWorkflowRequest.getVersion(), startWorkflowRequest.getCorrelationId(),
             startWorkflowRequest.getPriority(), startWorkflowRequest.getInput(), startWorkflowRequest.getExternalInputPayloadStoragePath(),
             startWorkflowRequest.getTaskToDomain(), startWorkflowRequest.getWorkflowDef());
+
+        long endTime = System.currentTimeMillis();
+        LOGGER.info("[AFFE] workflow execution plus retrieve totaly : {} ms" , endTime - startTime);
+        return workflowId;
     }
 
     /**
