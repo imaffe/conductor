@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.MediaType;
@@ -54,15 +55,26 @@ public class JettyServer implements Lifecycle {
 
     private static Logger logger = LoggerFactory.getLogger(JettyServer.class);
 
+    public static final String QUEUE_TYPE_SYNC = "sync";
+    public static final String QUEUE_TYPE_MONITOR = "monitor";
+    public static final String QUEUE_TYPE_LIMITED = "limited";
+
     private final int port;
     private final boolean join;
-
+    private final int threadNumMax;
+    private final int threadNumMin;
+    private final String queueType;
+    private final int queueSize;
     private Server server;
 
 
-    public JettyServer(int port, boolean join) {
+    public JettyServer(int port, boolean join, int threadNumMax, int threadNumMin, String queueType, int queueSize) {
         this.port = port;
         this.join = join;
+        this.threadNumMax = threadNumMax;
+        this.threadNumMin = threadNumMin;
+        this.queueType = queueType;
+        this.queueSize = queueSize;
     }
 
 
@@ -73,8 +85,19 @@ public class JettyServer implements Lifecycle {
             throw new IllegalStateException("Server is already running");
         }
 
-        MonitoredQueuedThreadPool queuedThreadPool = new MonitoredQueuedThreadPool(200);
-        // QueuedThreadPool queuedThreadPool = new QueuedThreadPool(200, 200, new SynchronousQueue<>());
+        QueuedThreadPool queuedThreadPool = null;
+        if (queueType.equals(QUEUE_TYPE_SYNC)) {
+            queuedThreadPool = new QueuedThreadPool(threadNumMax, threadNumMin, new SynchronousQueue<>());
+        } else if (queueType.equals(QUEUE_TYPE_MONITOR)) {
+            queuedThreadPool = new MonitoredQueuedThreadPool(threadNumMax);
+        } else if (queueType.equals(QUEUE_TYPE_LIMITED)) {
+            queuedThreadPool = new QueuedThreadPool(threadNumMax, threadNumMin, new LinkedBlockingQueue<>(queueSize));
+        } else {
+            queuedThreadPool = new QueuedThreadPool();
+        }
+
+
+
         this.server = new Server(queuedThreadPool);
 
 

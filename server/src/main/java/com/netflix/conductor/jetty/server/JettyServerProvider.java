@@ -19,7 +19,11 @@ public class JettyServerProvider implements Provider<Optional<JettyServer>> {
                 Optional.of(
                         new JettyServer(
                                 configuration.getPort(),
-                                configuration.isJoin()
+                                configuration.isJoin(),
+                                configuration.getMaxThreadNum(),
+                                configuration.getMinThreadNum(),
+                                configuration.getQueueType(),
+                                configuration.getQueueSize()
                         ))
                 : Optional.empty();
     }
