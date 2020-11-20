@@ -1,0 +1,9 @@
+{
+    "name": "affe_workflow_http_test",
+    "version": 3,
+    "correlationId": "my_netflix_identation_workflows",
+    "input": {
+        "identType": "animation",
+        "contentId": "my_unique_content_id"
+    }
+}

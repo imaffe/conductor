@@ -1,0 +1,13 @@
+{
+    "name": "affe_workflow_sleep_test",
+    "version": 1,
+    "correlationId": "my_netflix_identation_workflows_grpc",
+    "input": {
+	"endpoint": "192.168.10.1:8980",
+        "fullService": "SLEEP",
+	"data": {
+          "latitude": 407838351,
+          "longitude": -746143763
+        }	
+    }
+}

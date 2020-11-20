@@ -1,0 +1,39 @@
+{
+    "name": "add_netflix_identation",
+    "description": "Adds Netflix Identation to video files.",
+    "version": 2,
+    "schemaVersion": 2,
+    "ownerEmail": "affeisme@gmail.com",
+    "tasks": [
+        {
+            "name": "verify_if_idents_are_added",
+            "taskReferenceName": "ident_verification",
+            "inputParameters": {
+                "contentId": "${workflow.input.contentId}"
+            },
+            "type": "SIMPLE"
+        },
+        {
+            "name": "decide_task",
+            "taskReferenceName": "is_idents_added",
+            "inputParameters": {
+                "case_value_param": "${ident_verification.output.is_idents_added}"
+            },
+            "type": "DECISION",
+            "caseValueParam": "case_value_param",
+            "decisionCases": {
+                "false": [
+                    {
+                        "name": "add_idents",
+                        "taskReferenceName": "add_idents_by_type",
+                        "inputParameters": {
+                            "identType": "${workflow.input.identType}",
+                            "contentId": "${workflow.input.contentId}"
+                        },
+                        "type": "SIMPLE"
+                    }
+                ]
+            }
+        }
+    ]
+}

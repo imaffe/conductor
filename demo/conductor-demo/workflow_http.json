@@ -1,0 +1,47 @@
+{
+  "name": "affe_workflow_http_test",
+  "description": "Adds Test Http",
+  "version": 3,
+  "schemaVersion": 2,
+  "tasks": [
+    {
+      "name": "verify_if_idents_are_added",
+      "taskReferenceName": "curl_google_1",
+      "inputParameters": {
+        "http_request": {
+          "uri": "http://localhost:8080",
+          "method": "GET",
+          "accept": "text/plain"
+        }
+      },
+      "type": "HTTP"
+    },
+    {
+      "name": "verify_if_idents_are_added",
+      "taskReferenceName": "curl_google_2",
+      "inputParameters": {
+        "http_request": {
+          "uri": "http://localhost:8080",
+          "method": "GET",
+          "accept": "text/plain",
+          "body": "${curl_google_1.output.response.responseCode}"
+        }
+      },
+      "type": "HTTP"
+    },
+    {
+      "name": "verify_if_idents_are_added",
+      "taskReferenceName": "curl_google_3",
+      "inputParameters": {
+        "http_request": {
+          "uri": "http://localhost:8080",
+          "method": "GET",
+          "accept": "text/plain",
+	  "body": "${curl_google_2.output.response.responseCode}"
+        }
+      },
+      "type": "HTTP"
+    }
+  ],
+  "ownerEmail": "affeisme@gmail.com"
+}

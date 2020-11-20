@@ -1,0 +1,41 @@
+{
+  "name": "affe_workflow_grpc_test",
+  "description": "Adds Test GRPC",
+  "version": 3,
+  "schemaVersion": 2,
+  "tasks": [
+    {
+      "name": "verify_if_idents_are_added",
+      "taskReferenceName": "grpc_1",
+      "inputParameters": {
+        "grpc_request": {
+          "endpoint": "${workflow.input.endpoint}",
+          "fullService": "${workflow.input.fullService}",
+          "timeoutInMillis": "500",
+	  "jsonBody": {
+             "latitude": "${workflow.input.data.latitude}",
+	     "longitude": "${workflow.input.data.longitude}"
+ 	  }
+        }
+      },
+      "type": "DYNAMIC_PROTOBUF_GRPC"
+    },
+    {
+      "name": "verify_if_idents_are_added",
+      "taskReferenceName": "grpc_2",
+      "inputParameters": {
+        "grpc_request": {
+          "endpoint": "${workflow.input.endpoint}",
+          "fullService": "${workflow.input.fullService}",
+          "timeoutInMillis": "500",
+          "jsonBody": {
+            "latitude": "${grpc_1.output.response.location.latitude}",
+            "longitude": "${grpc_1.output.response.location.longitude}"
+          }
+        }
+      },
+      "type": "DYNAMIC_PROTOBUF_GRPC"
+    }
+  ],
+  "ownerEmail": "affeisme@gmail.com"
+}
